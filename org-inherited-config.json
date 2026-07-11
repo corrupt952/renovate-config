@@ -1,0 +1,11 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-inherited-schema.json",
+    "onboarding": true,
+    "onboardingConfigFileName": ".github/renovate.json5",
+    "onboardingConfig": {
+        "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+        "extends": [
+            "github>corrupt952/renovate-config:default.json5"
+        ]
+    }
+}

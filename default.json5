@@ -1,0 +1,39 @@
+{
+  assignees: ["corrupt952"],
+  reviewers: ["corrupt952"],
+
+  extends: [
+    "config:best-practices",
+
+    // https://docs.renovatebot.com/presets-default/
+    ":prHourlyLimitNone",
+    ":prConcurrentLimitNone",
+
+    // Keep biome.json $schema version in sync with @biomejs/biome package
+    "customManagers:biomeVersions",
+  ],
+
+  // https://docs.renovatebot.com/key-concepts/scheduling/#setting-your-timezone
+  timezone: "Asia/Tokyo",
+
+  // https://docs.renovatebot.com/key-concepts/scheduling/
+  // Full-day Monday window. The built-in `schedule:weekly` / `schedule:earlyMondays`
+  // only allows PRs in a narrow early-morning window, which the Mend-hosted
+  // scheduler routinely misses and silently skips for a week
+  // (renovatebot/renovate#35532).
+  schedule: ["on monday"],
+
+  // Automerge
+  // automergeStrategy is intentionally omitted: it is silently ignored when
+  // platformAutomerge=true (renovatebot/renovate#41177). GitHub repo merge
+  // settings control the actual strategy instead.
+  platformAutomerge: true,
+
+  // Package rules
+  packageRules: [
+    {
+      matchUpdateTypes: ["minor", "patch", "pin", "digest"],
+      automerge: true,
+    },
+  ],
+}
