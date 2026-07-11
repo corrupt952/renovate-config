@@ -16,6 +16,12 @@
   // https://docs.renovatebot.com/key-concepts/scheduling/#setting-your-timezone
   timezone: "Asia/Tokyo",
 
+  // https://docs.renovatebot.com/configuration-options/#minimumreleaseage
+  // config:best-practices only sets this for npm (security:minimumReleaseAgeNpm,
+  // 3 days), so this fallback covers other ecosystems (docker, actions, gomod, etc.)
+  // that would otherwise have no cooldown at all.
+  minimumReleaseAge: "7 days",
+
   // https://docs.renovatebot.com/key-concepts/scheduling/
   // Full-day Monday window. The built-in `schedule:weekly` / `schedule:earlyMondays`
   // only allows PRs in a narrow early-morning window, which the Mend-hosted
