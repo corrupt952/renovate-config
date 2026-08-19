@@ -4,24 +4,30 @@
 
   extends: [
     "config:best-practices",
+
     ":prHourlyLimitNone",
     ":prConcurrentLimitNone",
+
+    // Keep biome.json $schema version in sync with @biomejs/biome package
     "customManagers:biomeVersions",
   ],
 
   timezone: "Asia/Tokyo",
 
-  // config:best-practices sets this for npm only, leaving docker/actions/gomod
-  // with no cooldown.
+  // config:best-practices only sets this for npm (security:minimumReleaseAgeNpm,
+  // 3 days), so this fallback covers version updates in other ecosystems
+  // (docker, actions, gomod, etc.) that would otherwise have no cooldown at all.
   minimumReleaseAge: "7 days",
 
-  // schedule:weekly and schedule:earlyMondays only allow a narrow early-morning
-  // window, which the Mend-hosted scheduler routinely misses and then silently
-  // skips for a week (renovatebot/renovate#35532).
+  // Full-day Monday window. The built-in `schedule:weekly` / `schedule:earlyMondays`
+  // only allows PRs in a narrow early-morning window, which the Mend-hosted
+  // scheduler routinely misses and silently skips for a week
+  // (renovatebot/renovate#35532).
   schedule: ["on monday"],
 
-  // automergeStrategy is omitted deliberately: platformAutomerge=true silently
-  // ignores it (renovatebot/renovate#41177).
+  // automergeStrategy is intentionally omitted: it is silently ignored when
+  // platformAutomerge=true (renovatebot/renovate#41177). GitHub repo merge
+  // settings control the actual strategy instead.
   platformAutomerge: true,
 
   packageRules: [
@@ -30,9 +36,11 @@
       automerge: true,
     },
 
-    // github-tags ages a digest update against the matched version's original
-    // release timestamp, which does not move when a tag is force-pushed to new
-    // commits - so minimumReleaseAge cannot hold a retargeted tag.
+    // Action digests are left for review because minimumReleaseAge cannot hold a
+    // retargeted tag: github-tags ages the update against the matched version's
+    // original release timestamp, and that does not move when an existing tag is
+    // force-pushed to new commits. A retargeted tag, the tj-actions/changed-files
+    // pattern, would otherwise reach the default branch unreviewed.
     //
     // matchDepTypes is required: the github-actions manager also owns
     // jobs.<id>.container.image, whose depType is `container`, not `action`.
