@@ -48,5 +48,21 @@
       matchUpdateTypes: ["minor", "patch", "pin", "digest"],
       automerge: true,
     },
+
+    // Action digests are the one class minimumReleaseAge cannot hold, so they
+    // are left for review. updateType=digest carries no release timestamp, and
+    // github-tags ages the update against the tag's committedDate - a value
+    // whoever force-pushes the tag chooses (renovatebot/renovate#44820). A
+    // retargeted tag, the tj-actions/changed-files pattern, would otherwise
+    // reach the default branch unreviewed.
+    //
+    // matchDepTypes is required: the github-actions manager also owns
+    // jobs.<id>.container.image, whose depType is `container`, not `action`.
+    {
+      matchManagers: ["github-actions"],
+      matchDepTypes: ["action"],
+      matchUpdateTypes: ["digest"],
+      automerge: false,
+    },
   ],
 }
