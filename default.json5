@@ -4,61 +4,35 @@
 
   extends: [
     "config:best-practices",
-
-    // https://docs.renovatebot.com/presets-default/
     ":prHourlyLimitNone",
     ":prConcurrentLimitNone",
-
-    // Keep biome.json $schema version in sync with @biomejs/biome package
     "customManagers:biomeVersions",
   ],
 
-  // https://docs.renovatebot.com/key-concepts/scheduling/#setting-your-timezone
   timezone: "Asia/Tokyo",
 
-  // https://docs.renovatebot.com/configuration-options/#minimumreleaseage
-  // config:best-practices only sets this for npm (security:minimumReleaseAgeNpm,
-  // 3 days), so this fallback covers version updates in other ecosystems
-  // (docker, actions, gomod, etc.) that would otherwise have no cooldown at all.
-  //
-  // https://docs.renovatebot.com/key-concepts/minimum-release-age/#digest-updates
-  // Digest updates are aged as well, but against the release timestamp of the
-  // newest version matching the current value - registries rarely expose when a
-  // digest itself was published. How strong that guarantee is depends on the
-  // datasource, so it does not hold uniformly.
-  //
-  // Because platformAutomerge=true hands merging to GitHub, required status
-  // checks are what actually gate an automerged PR. :skipStatusChecks must not
-  // be used in repositories extending this config.
+  // config:best-practices sets this for npm only, leaving docker/actions/gomod
+  // with no cooldown.
   minimumReleaseAge: "7 days",
 
-  // https://docs.renovatebot.com/key-concepts/scheduling/
-  // Full-day Monday window. The built-in `schedule:weekly` / `schedule:earlyMondays`
-  // only allows PRs in a narrow early-morning window, which the Mend-hosted
-  // scheduler routinely misses and silently skips for a week
-  // (renovatebot/renovate#35532).
+  // schedule:weekly and schedule:earlyMondays only allow a narrow early-morning
+  // window, which the Mend-hosted scheduler routinely misses and then silently
+  // skips for a week (renovatebot/renovate#35532).
   schedule: ["on monday"],
 
-  // Automerge
-  // automergeStrategy is intentionally omitted: it is silently ignored when
-  // platformAutomerge=true (renovatebot/renovate#41177). GitHub repo merge
-  // settings control the actual strategy instead.
+  // automergeStrategy is omitted deliberately: platformAutomerge=true silently
+  // ignores it (renovatebot/renovate#41177).
   platformAutomerge: true,
 
-  // Package rules
   packageRules: [
     {
       matchUpdateTypes: ["minor", "patch", "pin", "digest"],
       automerge: true,
     },
 
-    // Action digests are left for review because minimumReleaseAge cannot hold
-    // a retargeted tag. For SHA-pinned actions the github-tags datasource ages
-    // the update against the timestamp of the matched version's original
-    // release, and that timestamp does not move when an existing tag is
-    // force-pushed to new commits - so the update passes the cooldown at once.
-    // The tj-actions/changed-files pattern would otherwise reach the default
-    // branch unreviewed.
+    // github-tags ages a digest update against the matched version's original
+    // release timestamp, which does not move when a tag is force-pushed to new
+    // commits - so minimumReleaseAge cannot hold a retargeted tag.
     //
     // matchDepTypes is required: the github-actions manager also owns
     // jobs.<id>.container.image, whose depType is `container`, not `action`.
