@@ -38,8 +38,8 @@
 
     // https://docs.renovatebot.com/key-concepts/minimum-release-age/
     // config:best-practices only ages npm (security:minimumReleaseAgeNpm,
-    // 3 days). This covers version updates in every other ecosystem, which
-    // would otherwise be automerged with no cooldown at all.
+    // 3 days). This gives version updates in every other ecosystem the same
+    // cooldown; they would otherwise be automerged with no cooldown at all.
     //
     // Scoped to version updates on purpose. The other update types carry no
     // usable release timestamp (lockFileMaintenance, pin, replacement, bump,
@@ -56,7 +56,7 @@
     {
       matchDatasources: ["!npm"],
       matchUpdateTypes: ["major", "minor", "patch"],
-      minimumReleaseAge: "7 days",
+      minimumReleaseAge: "3 days",
     },
 
     // Action digests are left for review. A digest update is what a retargeted
