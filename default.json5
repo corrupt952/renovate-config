@@ -16,19 +16,6 @@
   // https://docs.renovatebot.com/key-concepts/scheduling/#setting-your-timezone
   timezone: "Asia/Tokyo",
 
-  // https://docs.renovatebot.com/configuration-options/#minimumreleaseage
-  // config:best-practices only sets this for npm (security:minimumReleaseAgeNpm,
-  // 3 days), so this fallback covers version updates in other ecosystems
-  // (docker, actions, gomod, etc.) that would otherwise have no cooldown at all.
-  //
-  // Digest updates are aged too, but against the release timestamp of the
-  // newest version matching the current value, since registries rarely publish
-  // one for the digest itself. How much that is worth depends on the datasource
-  // - see the packageRules entry for github-actions below. CI passing is the
-  // only gate left where it is worth nothing, which is why :skipStatusChecks
-  // must not be used in repositories extending this config.
-  minimumReleaseAge: "7 days",
-
   // https://docs.renovatebot.com/key-concepts/scheduling/
   // Full-day Monday window. The built-in `schedule:weekly` / `schedule:earlyMondays`
   // only allows PRs in a narrow early-morning window, which the Mend-hosted
@@ -49,12 +36,11 @@
       automerge: true,
     },
 
-    // Action digests are the one class minimumReleaseAge cannot hold, so they
-    // are left for review. github-tags ages the update against the timestamp of
-    // the matched version's original release, and that does not move when an
-    // existing tag is force-pushed to new commits, so a retargeted tag clears
-    // the cooldown at once. The tj-actions/changed-files pattern would
-    // otherwise reach the default branch unreviewed.
+    // Action digests are left for review. A digest update is what a retargeted
+    // tag looks like: an existing tag force-pushed to new commits keeps its
+    // version and release timestamp, so no release-age cooldown can hold it
+    // back. The tj-actions/changed-files pattern would otherwise reach the
+    // default branch unreviewed.
     //
     // matchDepTypes is required: the github-actions manager also owns
     // jobs.<id>.container.image, whose depType is `container`, not `action`.
